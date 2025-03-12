@@ -2,98 +2,104 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:meta_home_ai/model.dart';
+import 'package:meta_home_ai/page/cleaning_robot_page.dart';
+import 'package:meta_home_ai/widgets/circle_icon_box.dart';
+import 'package:meta_home_ai/widgets/circle_icon_button.dart';
+import 'package:meta_home_ai/widgets/custom_switch.dart';
 
-final primaryColor = Color(0xFFE9BF2C);
+class ShowModalControlPanel extends StatelessWidget {
+  const ShowModalControlPanel({super.key});
 
-class ControlPage extends StatefulWidget {
-  const ControlPage({super.key});
-
-  @override
-  State<ControlPage> createState() => _ControlPageState();
-}
-
-class _ControlPageState extends State<ControlPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: MetaHomeAppBar(),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/living_room.jpg"),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
-          ),
-        ),
-        child: SafeArea(
-          bottom: false,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 48),
-            child: FronstedContainer(
-              borderRadius: BorderRadius.circular(80),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "My Device",
-                    style: GoogleFonts.oswald(
-                      color: Colors.white,
-                      fontSize: 32,
-                      height: 1,
-                    ),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 48),
+        child: FronstedContainer(
+          borderRadius: BorderRadius.circular(80),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: 104,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.white54,
+                    borderRadius: BorderRadius.circular(4),
                   ),
-                  SizedBox(height: 24),
-                  SizedBox(
-                    height: 40,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      physics: PageScrollPhysics(),
-                      children: [
-                        FilterDeviceBox(enable: true, text: 'All Devices'),
-                        SizedBox(width: 8),
-                        FilterDeviceBox(text: "Living room"),
-                        SizedBox(width: 8),
-                        FilterDeviceBox(text: "Kitchen"),
-                        SizedBox(width: 8),
-                        FilterDeviceBox(text: "Bedroom"),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 24),
-                  Expanded(
-                    flex: 6,
-                    child: Row(
-                      children: [
-                        Expanded(child: AirControllerBox()),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Expanded(child: CleaningRobotControllerBox()),
-                              SizedBox(height: 12),
-                              Expanded(child: SpeakerControllerBox()),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  Expanded(
-                    child: VolumnSlider(
-                      initialValue: 38,
-                      onChanged: (double value) {},
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+              SizedBox(height: 16),
+              Text(
+                "My Device",
+                style: GoogleFonts.oswald(
+                  color: Colors.white,
+                  fontSize: 32,
+                  height: 1,
+                ),
+              ),
+              SizedBox(height: 24),
+              SizedBox(
+                height: 40,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  physics: PageScrollPhysics(),
+                  children: [
+                    FilterDeviceBox(enable: true, text: 'All Devices'),
+                    SizedBox(width: 8),
+                    FilterDeviceBox(text: "Living room"),
+                    SizedBox(width: 8),
+                    FilterDeviceBox(text: "Kitchen"),
+                  ],
+                ),
+              ),
+              SizedBox(height: 24),
+              Expanded(
+                flex: 6,
+                child: Row(
+                  children: [
+                    Expanded(child: AirControllerBox()),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: CleaningRobotControllerBox(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) {
+                                      return CleaningRobotPage();
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          Expanded(child: SpeakerControllerBox()),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 12),
+              Expanded(
+                child: VolumnSlider(
+                  initialValue: 38,
+                  onChanged: (double value) {},
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -427,108 +433,112 @@ class SpeakerControllerBox extends StatelessWidget {
 }
 
 class CleaningRobotControllerBox extends StatelessWidget {
-  const CleaningRobotControllerBox({super.key});
+  final VoidCallback onTap;
+  const CleaningRobotControllerBox({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return ClipPath(
-      clipper: ShapeBorderClipper(
-        shape: ContinuousRectangleBorder(
-          borderRadius: BorderRadius.circular(100),
+    return InkWell(
+      onTap: onTap,
+      child: ClipPath(
+        clipper: ShapeBorderClipper(
+          shape: ContinuousRectangleBorder(
+            borderRadius: BorderRadius.circular(100),
+          ),
         ),
-      ),
-      child: Stack(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            color: primaryColor,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TweenAnimationBuilder(
-                      tween: Tween<double>(begin: 0.0, end: 0.90),
-                      duration: Duration(seconds: 1),
-                      builder: (
-                        BuildContext context,
-                        double value,
-                        Widget? child,
-                      ) {
-                        return Stack(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.black12,
-                              ),
-                              child: SizedBox(
-                                width: 56,
-                                height: 56,
-                                // TODO Add animation when start widget
-                                // Tween 0 - percent target
-                                child: CircularProgressIndicator(
-                                  value: value,
-                                  padding: EdgeInsets.all(2),
-                                  strokeWidth: 4,
-                                  color: Colors.white,
-                                  backgroundColor: Colors.black12,
-                                  year2023: false,
+        child: Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              color: primaryColor,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TweenAnimationBuilder(
+                        tween: Tween<double>(begin: 0.0, end: 0.32),
+                        duration: Duration(seconds: 1),
+                        builder: (
+                          BuildContext context,
+                          double value,
+                          Widget? child,
+                        ) {
+                          return Stack(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.black12,
                                 ),
-                              ),
-                            ),
-                            Positioned.fill(
-                              child: Center(
-                                child: Text(
-                                  "${(value * 100).toInt()}%",
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.oswald(
+                                child: SizedBox(
+                                  width: 56,
+                                  height: 56,
+                                  child: CircularProgressIndicator(
+                                    value: value,
+                                    padding: EdgeInsets.all(2),
+                                    strokeWidth: 4,
                                     color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                    height: 1,
+                                    backgroundColor: Colors.black12,
+                                    year2023: false,
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
+                              Positioned.fill(
+                                child: Center(
+                                  child: Text(
+                                    "${(value * 100).toInt()}%",
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.oswald(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      height: 1,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  AutoSizeText(
+                    "Cleaning\nRobot",
+                    maxLines: 2,
+                    style: GoogleFonts.oswald(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                      height: 1.3,
                     ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                AutoSizeText(
-                  "Cleaning\nRobot",
-                  maxLines: 2,
-                  style: GoogleFonts.oswald(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 28,
-                    height: 1.3,
                   ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  "Kitchen",
-                  style: GoogleFonts.oswald(
-                    color: Colors.white,
-                    fontSize: 16,
-                    height: 1.3,
+                  SizedBox(height: 4),
+                  Text(
+                    "Kitchen",
+                    style: GoogleFonts.oswald(
+                      color: Colors.white,
+                      fontSize: 16,
+                      height: 1.3,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          // TODO: dynamic size, give size Image and position by parent box size ratio
-          Positioned(
-            right: -32,
-            top: -32,
-            width: 128,
-            child: Image(image: AssetImage('assets/images/cleaning_robot.png')),
-          ),
-        ],
+            // TODO: dynamic size, give size Image and position by parent box size ratio
+            Positioned(
+              right: -32,
+              top: -32,
+              width: 128,
+              child: Image(
+                image: AssetImage('assets/images/cleaning_robot.png'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -672,8 +682,6 @@ class InfoAndSwitch extends StatefulWidget {
 }
 
 class _InfoAndSwitchState extends State<InfoAndSwitch> {
-  bool isOn = false;
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -687,18 +695,11 @@ class _InfoAndSwitchState extends State<InfoAndSwitch> {
               icon: widget.icon,
               size: 36,
             ),
-            Switch.adaptive(
-              value: isOn,
+            CustomSwitch(
+              isOn: false,
               onChanged: (isChanged) {
                 widget.onSwitchChanged(isChanged);
-                setState(() {
-                  isOn = isChanged;
-                });
               },
-              activeColor: Colors.white,
-              activeTrackColor: primaryColor,
-              inactiveThumbColor: Colors.white,
-              inactiveTrackColor: Colors.white.withValues(alpha: 0.2),
             ),
           ],
         ),
@@ -765,93 +766,6 @@ class MetaHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(64);
-}
-
-/*
-'assets/icons/menu_64.png'
-EdgeInsets.all(16)
-width: 24,
-*/
-
-class CircleIconButton extends StatelessWidget {
-  final VoidCallback? onTap;
-  final VoidCallback? onTapDown;
-  final VoidCallback? onTapUp;
-  final VoidCallback? onTapCancel;
-  final EdgeInsets padding;
-  final ImageProvider icon;
-  final double size;
-
-  const CircleIconButton({
-    super.key,
-    required this.icon,
-    required this.padding,
-    required this.size,
-    this.onTap,
-    this.onTapDown,
-    this.onTapUp,
-    this.onTapCancel,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipOval(
-      child: Material(
-        color: Colors.white.withValues(alpha: 0.2),
-        child: InkWell(
-          splashColor: primaryColor,
-          onTap: onTap,
-          onTapDown: (_) {
-            onTapDown?.call();
-          },
-          onTapUp: (_) {
-            onTapUp?.call();
-          },
-          onTapCancel: () {
-            onTapCancel?.call();
-          },
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 30.0, sigmaY: 30.0),
-            child: Container(
-              padding: padding,
-              decoration: BoxDecoration(shape: BoxShape.circle),
-              child: ImageIcon(icon, color: Colors.white, size: size),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class CircleIconBox extends StatelessWidget {
-  final EdgeInsets padding;
-  final ImageProvider icon;
-  final double size;
-
-  const CircleIconBox({
-    super.key,
-    required this.padding,
-    required this.size,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipOval(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 30.0, sigmaY: 30.0),
-        child: Container(
-          padding: padding,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.2),
-            shape: BoxShape.circle,
-          ),
-          child: ImageIcon(icon, color: Colors.white, size: size),
-        ),
-      ),
-    );
-  }
 }
 
 class FilterDeviceBox extends StatelessWidget {
