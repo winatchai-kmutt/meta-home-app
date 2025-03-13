@@ -1,7 +1,7 @@
 # MetaHome app with Flutter
 Check out our project visuals on Instagram:
 
-- [📸 Project App Preview](https://www.instagram.com/p/DGhcmSoycyd/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==)  
+- [📸 Project App Preview](https://www.instagram.com/p/DHIFfTRySKN/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==)  
 
 A new Flutter project.
 
